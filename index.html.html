@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKiBD Kolos 2 — Quiz ABCD</title>
+<style>
+:root{
+  --bg:#0e1116; --panel:#171c24; --panel2:#1e242e; --border:#2a3340;
+  --txt:#e6ebf2; --muted:#8b97a8; --accent:#5b8def; --accent2:#3a6fd8;
+  --ok:#22c55e; --okbg:#0f2e1c; --bad:#ef4444; --badbg:#321518;
+  --gold:#e0a200;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 80px}
+header{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+h1{font-size:22px;margin:0;letter-spacing:.2px}
+.sub{color:var(--muted);font-size:13px}
+.bar{position:sticky;top:0;z-index:10;background:linear-gradient(var(--bg),var(--bg) 70%,transparent);
+  padding:12px 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.progress{flex:1;min-width:160px;height:8px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7aa7ff);transition:width .3s}
+.stat{font-size:13px;color:var(--muted);white-space:nowrap}
+.stat b{color:var(--txt)}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+.toggle{display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--panel2);
+  color:var(--txt);padding:8px 12px;border-radius:9px;font-size:14px;user-select:none}
+.toggle:hover{border-color:var(--accent);background:#222a36}
+.toggle input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--panel2);
+  color:var(--txt);padding:8px 14px;border-radius:9px;transition:.15s}
+button:hover{border-color:var(--accent);background:#222a36}
+button.primary{background:var(--accent2);border-color:var(--accent2)}
+button.primary:hover{background:var(--accent)}
+button:disabled{opacity:.45;cursor:default;border-color:var(--border);background:var(--panel2)}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:18px 18px 14px;margin-bottom:14px;scroll-margin-top:80px}
+.qhead{display:flex;gap:10px;align-items:baseline;margin-bottom:14px}
+.qnum{font-size:12px;font-weight:700;color:#0e1116;background:var(--gold);
+  border-radius:6px;padding:2px 8px;flex-shrink:0}
+.qtext{font-size:16px;font-weight:600}
+.qtext code,.opt code{background:#0c1018;border:1px solid #222b38;border-radius:5px;
+  padding:1px 5px;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;
+  background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;width:100%;font-size:14.5px;color:var(--txt)}
+.opt:hover:not(.locked){border-color:var(--accent);background:#222a36}
+.opt .letter{font-weight:700;color:var(--muted);flex-shrink:0;width:18px}
+.opt.correct{background:var(--okbg);border-color:var(--ok)}
+.opt.correct .letter{color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.opt.wrong .letter{color:var(--bad)}
+.opt.locked{cursor:default}
+.mark{margin-left:auto;font-weight:700;flex-shrink:0}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--bad)}
+.done{text-align:center;padding:30px 18px;background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:14px}
+.done h2{margin:.2em 0}
+.score{font-size:40px;font-weight:800}
+.hidden{display:none}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
+.nav .navpos{color:var(--muted);font-size:13px;white-space:nowrap}
+.nav .navpos b{color:var(--txt)}
+.nav button{min-width:120px}
+.nav button:disabled{opacity:.4;cursor:default;border-color:var(--border);background:var(--panel2)}
+footer{color:var(--muted);font-size:12px;text-align:center;margin-top:24px}
+.summary-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.hint{color:var(--muted);font-size:13px;margin-top:8px}
+@media(max-width:520px){.qtext{font-size:15px}.opt{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>SKiBD — Kolokwium 2 · Quiz ABCD</h1>
+    <div class="sub">Bazy danych · PHP · HTML · SQL — pytania zamknięte z poprawnymi odpowiedziami</div>
+  </header>
+
+  <div class="bar">
+    <div class="progress"><i id="pbar"></i></div>
+    <div class="stat">Odpowiedzi: <b id="answered">0</b>/<b id="total">0</b> · Poprawne: <b id="correct" style="color:var(--ok)">0</b> · Błędne: <b id="wrong" style="color:var(--bad)">0</b> · Tryb: <b id="modeLabel">pełny</b></div>
+    <div class="controls">
+      <button id="retryWrongBtn" disabled>↺ Przerób błędne</button>
+      <button id="shuffleBtn">🔀 Losuj kolejność pytań</button>
+      <label class="toggle" title="Po włączeniu odpowiedzi A-D będą ustawiane losowo w każdym pytaniu"><input type="checkbox" id="shuffleAnswersToggle"> Losuj odpowiedzi</label>
+      <button id="resetBtn">↻ Reset</button>
+    </div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div id="nav" class="nav">
+    <button id="prevBtn">← Poprzednie</button>
+    <span class="navpos">Pytanie <b id="navnum">1</b> / <b id="navtot">0</b></span>
+    <button id="nextBtn">Następne →</button>
+  </div>
+
+  <div id="summary" class="hidden"></div>
+
+  <footer>53 unikalne pytania · połączone ze wszystkich źródeł, duplikaty usunięte</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "Aby wyświetlić wszystkie dane pracowników o nazwisku Kowalski z tabeli 'pracownicy' należy posłużyć się następującym poleceniem SQL:",
+    a: [
+      "SELECT ALL VALUES FROM pracownicy LIMIT nazwisko='Kowalski';",
+      "SELECT FROM pracownicy VALUES * WHERE nazwisko='Kowalski'",
+      "SELECT ALL VALUES FROM pracownicy WHERE nazwisko='Kowalski'",
+      "SELECT * FROM pracownicy WHERE nazwisko='Kowalski';"
+    ],
+    correct: 3
+  },
+  {
+    q: "Których z poniższych operatorów stosuje się w kodzie PHP?",
+    a: [
+      "przypisania, arytmetyczne, porównania, logiczne",
+      "przypisania, porównania, logiczne",
+      "matematyczne, równości, porównania, zmienne",
+      "przypisania, porównania, matematyczne, zmienno-logiczne"
+    ],
+    correct: 0
+  },
+  {
+    q: "Co rozumiemy przez język definiowania struktury danych DDL?",
+    a: [
+      "jest używany głównie przez administratorów systemu baz danych do nadawania odpowiednich uprawnień do korzystania z baz danych",
+      "jest wykorzystywany do wszystkiego rodzajów operacji na tabelach, takich jak: tworzenie, modyfikacja oraz usuwanie",
+      "służy do manipulowania danymi umieszczonymi w tabelach, pozwala na wstawianie danych, ich prezentację, modyfikowanie oraz usuwanie",
+      "służy do operacji zmiany wartości danych umieszczonych w tabelach"
+    ],
+    correct: 1
+  },
+  {
+    q: "Poniższe polecenie PHP <? $day = 0; echo \"$dni_tygodnia[$day]\"; ?> spowoduje wstawienie:",
+    a: [
+      "tekstu, który jest przechowywany w zmiennej tablicowej $dni_tygodnia na pozycji o indeksie 0;",
+      "nic nie spowoduje, bo jako indeks podano wartość, która nie może być indeksem",
+      "tekstu: $dni_tygodnia[$day]",
+      "tekstu: $dni_tygodnia[0]"
+    ],
+    correct: 0
+  },
+  {
+    q: "Korzystając ze znacznika <FORM> </FORM> możemy:",
+    a: [
+      "Utworzyć tabelę",
+      "Tworzyć formularz",
+      "Formatować tabelę",
+      "Stworzyć komórkę danych w tabeli"
+    ],
+    correct: 1
+  },
+  {
+    q: "W PHP funkcje muszą:",
+    a: [
+      "Być zdeklarowane przed ich użyciem",
+      "Nie przyjmować argumentów",
+      "Zwracać jakąś wartość",
+      "Przyjmować argumenty"
+    ],
+    correct: 0
+  },
+  {
+    q: "Język do wybierania i manipulowania danymi DML (Data Manipulation Language) służy do:",
+    a: [
+      "jest używany głównie przez administratorów systemu baz danych do nadawania odpowiednich uprawnień do korzystania z bazy danych",
+      "służy do zarządzania danymi umieszczonymi w tabelach",
+      "służy do modyfikacji zawartości tabel",
+      "jest wykorzystywany do wszelkiego rodzaju operacji na tabelach, takich jak: tworzenie, modyfikacja oraz usuwanie"
+    ],
+    correct: 1
+  },
+  {
+    q: "Definiując typ zmiennej jako DOUBLE, możemy jej przypisać:",
+    a: [
+      "4-bajtową liczbę zmiennoprzecinkową",
+      "8-bajtową liczbę zmiennoprzecinkową",
+      "4-bajtową zmienną znakową",
+      "4-bajtową wartość całkowitą"
+    ],
+    correct: 1
+  },
+  {
+    q: "Chcąc wstawić na naszej stronie odnośnik do strony głównej AGH należy wpisać następującą linię:",
+    a: [
+      "<A HREF=\"http://www.agh.edu.pl/\">Strona główna AGH</A>",
+      "<A LINK=\"http://www.agh.edu.pl/\">Strona główna AGH</A>",
+      "<A NAME=\"Strona główna AGH\">http://www.agh.edu.pl/</A>",
+      "<LINK=\"http://www.agh.edu.pl/\">Strona główna AGH</LINK>"
+    ],
+    correct: 0
+  },
+  {
+    q: "Dwa główne typy zmiennych języka PHP to:",
+    a: [
+      "Typ skalarny i tablicowy",
+      "Typ obiektowy i graficzny",
+      "Typ tekstowy i graficzny",
+      "Typ arytmetyczny i znakowy"
+    ],
+    correct: 0
+  },
+  {
+    q: "Linia: <IMG BORDER=\"0\" ALIGN=\"right\" HEIGHT=\"10\"> spowoduje:",
+    a: [
+      "Wstawienie w dokumencie obrazka po lewej stronie o wysokości 10 px i wyrównanie tekstu do jego prawej strony;",
+      "Wstawienie w dokumencie po prawej stronie obrazka o wysokości 10 px i wyrównanie tekstu do jego lewej strony, przy czym nie będzie odstępu pomiędzy obrazkiem a tekstem;",
+      "Nie spowoduje wstawienia obrazka",
+      "Wstawienie w dokumencie obrazka o wysokości 10 px wyrównanego do prawej strony;"
+    ],
+    correct: 1
+  },
+  {
+    q: "W celu usunięcia z tabeli 'pracownicy' wszystkich pracowników, których płaca jest niższa niż 500 zł należy posłużyć się następującym poleceniem SQL:",
+    a: [
+      "DELETE FROM pracownicy WHERE placa < 500;",
+      "DELETE ALL pracownicy FROM pracownicy WHERE placa < 500;",
+      "SELECT AND DELETE ALL pracownicy WHERE placa < 500;",
+      "DELETE ALL pracownicy WHERE placa < 500;"
+    ],
+    correct: 0
+  },
+  {
+    q: "Co to jest HTML?",
+    a: [
+      "dokument tworzący strony www",
+      "dokument tekstowy",
+      "język obiektowy do tworzenia stron WWW",
+      "język skryptowy pozwalający za pomocą znaczników określać różne formatowanie dokumentu"
+    ],
+    correct: 3
+  },
+  {
+    q: "Co to jest PHP:",
+    a: [
+      "Język PHP jest językiem skryptowym, którego składnia jest zbliżona do języka C. Kod PHP umieszcza się w dokumencie HTML pomiędzy parą znaczników <?php ?> i nadaje zwyczajowe rozszerzenie pliku php.",
+      "Język PHP jest językiem skryptowym, którego składnia jest zbliżona do języka C. Kod PHP umieszcza się w dokumencie HTML pomiędzy parą znaczników <php> </php> i nadaje zwyczajowe rozszerzenie pliku php.",
+      "Język PHP jest językiem skryptowym którego składnia zbliżona jest do języka C. PHP służy jedynie do tworzenia interfejsu pomiędzy bazą danych a stroną www",
+      "Język PHP jest językiem skryptowym, którego składnia jest zbliżona do języka C. Dla kodu PHP tworzy się własny plik i nadaje zwyczajowe rozszerzenie pliku php lub php3"
+    ],
+    correct: 0
+  },
+  {
+    q: "Które z poleceń pobiera wiersz z wyniku zapytania SQL i umieszcza go w tablicy?",
+    a: [
+      "mysql_free_result",
+      "mysql_db_select",
+      "mysql_fetch_array",
+      "mysql_query"
+    ],
+    correct: 2
+  },
+  {
+    q: "Polecenie mysql_connect:",
+    a: [
+      "wszystkie z powyższych",
+      "wymaga nazwy hosta, użytkownika i hasła;",
+      "musi być wykonane zanim rozpocznie się operacje na bazie danych;",
+      "służy do nawiązania połączenia z serwerem MySQL;"
+    ],
+    correct: 0
+  },
+  {
+    q: "Znacznik <TT> </TT>:",
+    a: [
+      "wyświetla tekst o stałej szerokości",
+      "wyświetla tekst pogrubiony",
+      "wyświetla tekst podkreślony",
+      "pozwala na umieszczanie listingu kodu programu"
+    ],
+    correct: 0
+  },
+  {
+    q: "Funkcja mysql_query:",
+    a: [
+      "Wykonuje zapytanie SQL",
+      "Wyświetla zawartość bazy danych",
+      "Zwalnia zasoby używane w bieżącym połączeniu",
+      "Wybiera bazę na serwerze MySQL"
+    ],
+    correct: 0
+  },
+  {
+    q: "Operatorami logicznymi w PHP są:",
+    a: [
+      "= =, ! =, <, >, <=, >=",
+      "&&, ||, !",
+      "&&, ||, = =, ! =, <, >, <=, >=",
+      "&&, ||"
+    ],
+    correct: 1
+  },
+  {
+    q: "Aby zagwarantować, że w tabeli studenci pojawi się tylko jeden student o danych imie='Jan' nazwisko='Kowalski' miejsce_ur='Krakow' należy:",
+    a: [
+      "zadeklarować pola imie, nazwisko, miejsce_ur jako unikalne;",
+      "zadeklarować pola imie, nazwisko, miejsce_ur jako indeksowane;",
+      "zadeklarować pola imie, nazwisko, miejsce_ur jako NOT NULL;",
+      "zadeklarować pola imie, nazwisko, miejsce_ur jako klucz główny;"
+    ],
+    correct: 0
+  },
+  {
+    q: "Język SQL:",
+    a: [
+      "Służy do manipulowania danymi zawartymi w relacyjnych bazach danych;",
+      "Wszystkie z powyższych",
+      "Służy do umieszczania tabel na stronach WWW;",
+      "Umożliwia umieszczanie na stronach WWW wykonywanych po stronie serwerach;"
+    ],
+    correct: 0
+  },
+  {
+    q: "Który z niżej wymienionych znaczników HTML oznacza początek akapitu:",
+    a: [
+      "<P>",
+      "<A>",
+      "<B>",
+      "<H>"
+    ],
+    correct: 0
+  },
+  {
+    q: "W celu dodania do tabeli 'pracownicy' danych nowego pracownika należy posłużyć się następującym poleceniem SQL:",
+    a: [
+      "INSERT INTO pracownicy VALUES (dane_pracownika);",
+      "NEW pracownicy VALUES (dane_pracownika);",
+      "ADD TO pracownicy VALUES (dane_pracownika);",
+      "UPDATE pracownicy VALUES (dane_pracownika);"
+    ],
+    correct: 0
+  },
+  {
+    q: "Do czego służy polecenie ALTER TABLE?",
+    a: [
+      "służy do modyfikacji zawartości komórki tabeli",
+      "służy do modyfikacji struktury tabeli",
+      "służy do sortowania tabeli",
+      "służy do dodawania nowych pól do istniejących tabel"
+    ],
+    correct: 1
+  },
+  {
+    q: "Tzw. część nagłówkowa dokumentu, w której zawarte są informacje o dokumencie, które nie są wyświetlane, ale mogą być wykorzystane np. przez wyszukiwarki internetowe ograniczona jest przez znacznik:",
+    a: [
+      "<INFO></INFO>",
+      "żadne z powyższych",
+      "<HTML></HTML>",
+      "<BODY></BODY>"
+    ],
+    correct: 1
+  },
+  {
+    q: "Polecenie mysql_fetch_array:",
+    a: [
+      "pobiera wiersz z wyniku zapytania SQL i umieszcza go w tablicy;",
+      "sortuje dane pobrane z bazy danych i umieszcza je w tabeli;",
+      "wszystkie z powyższych",
+      "służy do tworzenia zapytań SQL, które następnie są przesyłane do bazy danych;"
+    ],
+    correct: 0
+  },
+  {
+    q: "Zmienna:",
+    a: [
+      "wszystkie pozostałe",
+      "umożliwia wielokrotne odwoływanie się w skrypcie do tej samej wartości",
+      "to reprezentacja określonej wartości w pamięci komputera pod określoną nazwą",
+      "ma stałą wartość, dopóki użytkownik jej nie zmieni"
+    ],
+    correct: 2
+  },
+  {
+    q: "Aby wyświetlić wszystkie dane pracowników z tabeli 'pracownicy' o nazwisku zaczynającym się od litery K należy posłużyć się następującym poleceniem SQL:",
+    a: [
+      "SELECT * FROM pracownicy WHERE nazwisko LIKE 'K%'",
+      "SELECT * FROM pracownicy WHERE nazwisko='K_'",
+      "SELECT * FROM pracownicy WHERE nazwisko LIKE 'K_'",
+      "SELECT * FROM pracownicy WHERE nazwisko='K*'"
+    ],
+    correct: 0
+  },
+  {
+    q: "Dokument HTML jest interpretowany i formatowany w celu wyświetlenia przez:",
+    a: [
+      "serwer, na którym znajduje się dana strona",
+      "serwer WWW",
+      "oprogramowanie (tzw. przeglądarka) zainstalowane na komputerze klienta",
+      "protokół HTTP"
+    ],
+    correct: 2
+  },
+  {
+    q: "Skrypty PHP są wykonywane po stronie serwera, oznacza to, że:",
+    a: [
+      "duża ilość skryptów PHP przyspiesza działanie serwera",
+      "strony internetowe, które zawierają skrypty PHP są w całości interpretowane na serwerze, a do klienta wysyłana jest już gotowa i sformatowana strona WWW, bez konieczności ponownej interpretacji jej przez przeglądarkę stron internetowych",
+      "kod w nich zawarty jest interpretowany przez serwer, a w miejsce skryptu wstawiany jest wynik jego działania i dopiero w takiej postaci dokument jest wysyłany do komputera klienta",
+      "wszystkie pozostałe"
+    ],
+    correct: 2
+  },
+  {
+    q: "Instrukcja switch pozwala na:",
+    a: [
+      "Sterowanie przebiegiem programu",
+      "Wyłączenie obsługi PHP",
+      "Pobranie pliku z serwera",
+      "Przekierowanie do innej strony WWW"
+    ],
+    correct: 0
+  },
+  {
+    q: "Znacznik <TH> </TH>:",
+    a: [
+      "wyświetla tekst pogrubiony",
+      "wyświetla tekst podkreślony",
+      "pozwala na umieszczanie listingu kodu programu",
+      "Definiuje komórkę nagłówka w tabeli"
+    ],
+    correct: 3
+  },
+  {
+    q: "Skrypty PHP zawarte w dokumencie PHP powinny się znaleźć pomiędzy znacznikami:",
+    a: [
+      "<?php tekst skryptu ?>",
+      "<PHP> tekst skryptu </PHP>",
+      "<!-- tekst skryptu -->",
+      "// tekst skryptu"
+    ],
+    correct: 0
+  },
+  {
+    q: "Polecenie PHP: echo \"to jest tekst przykładowy\"; spowoduje:",
+    a: [
+      "wstawienie w treści strony w miejsce tego polecenia tekstu \"to jest tekst przykładowy\"",
+      "nic nie spowoduje - składnia jest niepoprawna",
+      "ustawienie tekstu \"to jest tekst przykładowy\", jako tytułu strony",
+      "wyświetlenie okienka z komunikatem \"to jest tekst przykładowy\""
+    ],
+    correct: 0
+  },
+  {
+    q: "Do czego służy polecenie include w kodzie PHP?",
+    a: [
+      "Polecenie include pozwala na wstawienie w danym miejscu dowolnego pliku graficznego, co można wykorzystać do tworzenia systemów portalowych.",
+      "Polecenie include pozwala na wstawianie w danym miejscu kodu PHP. Polecenie to pozwala na tworzenie dynamicznej zawartości pliku. Stosowanie tego polecenia pozwala zmniejszyć ilość kodu strony.",
+      "Polecenie include pozwala na wstawianie w danym miejscu dowolnego tekstu. Polecenie to pozwala na tworzenie dynamicznej zawartości pliku, co można wykorzystać przy tworzeniu systemów portalowych.",
+      "Polecenie include pozwala na wstawianie w danym miejscu pliku innego pliku wskazanego ścieżką. Polecenie to pozwala na tworzenie dynamicznej zawartości pliku wynikowego."
+    ],
+    correct: 3
+  },
+  {
+    q: "Instrukcja for w języku PHP zazwyczaj wykorzystywana jest do:",
+    a: [
+      "testowania warunku logicznego i powtarzania danej czynności wielokrotnie tylko wówczas, gdy warunek jest spełniony",
+      "testowania warunku logicznego i powtarzania danej czynności wielokrotnie tylko wówczas, gdy warunek nie jest spełniony",
+      "sprawdzania warunku logicznego i zwracania wartości TRUE gdy jest on spełniony i wartości FALSE w przeciwnym wypadku",
+      "powtarzania danej czynności wielokrotnie, przy czym ilość powtórzeń jest z góry założona"
+    ],
+    correct: 3
+  },
+  {
+    q: "Stwierdzenie, że dane pole jest indeksowane oznacza, że:",
+    a: [
+      "wartości tego pola muszą być unikalne",
+      "zawartość tabeli przy zapisywaniu zostanie uporządkowana wg. wartości tego pola, w celu usprawnienia przeszukiwania tabeli",
+      "wartość tego pola informuje użytkownika o numerze bieżącego rekordu w tabeli",
+      "wartości zapisane w tym polu są nadawane kolejno i automatycznie (auto_increment)"
+    ],
+    correct: 1
+  },
+  {
+    q: "W celu utworzenia nowej tabeli należy posłużyć się następującym poleceniem SQL:",
+    a: [
+      "CREATE TABLE nazwa_tabeli struktura_tabeli",
+      "UPDATE TABLE nazwa_tabeli struktura_tabeli",
+      "NEW TABLE nazwa_tabeli struktura_tabeli",
+      "INSERT TABLE nazwa_tabeli struktura_tabeli"
+    ],
+    correct: 0
+  },
+  {
+    q: "Zadeklarowanie danego pola jako klucz główny oznacza, że:",
+    a: [
+      "wartości tego pola są unikalne",
+      "wartości tego pola są zaszyfrowane",
+      "tabela ma być sortowana według wartości tego pola",
+      "wartości tego pola nie mogą być modyfikowane (są zablokowane)"
+    ],
+    correct: 0
+  },
+  {
+    q: "Operację sumowania w PHP przedstawia:",
+    a: [
+      "$b = $a + $3",
+      "b = a + 3",
+      "b = $a + 3",
+      "$b = $a + 3"
+    ],
+    correct: 3
+  },
+  {
+    q: "W celu napisania tekstu kolorem niebieskim należy użyć następującego znacznika HTML:",
+    a: [
+      "<COLOR=\"blue\">tekst</COLOR>",
+      "<TEXTCOLOR=\"blue\">tekst</TEXTCOLOR>",
+      "żaden z powyższych",
+      "<FONT COLOR=\"blue\">tekst</FONT>"
+    ],
+    correct: 3
+  },
+  {
+    q: "Tablice w języku PHP służą do:",
+    a: [
+      "Przechowywania listy wartości",
+      "Umieszczania w nich grafiki",
+      "Określają status warunków",
+      "Wszystkie z powyższych"
+    ],
+    correct: 0
+  },
+  {
+    q: "Zastosowanie, którego z poniższych znaczników spowoduje wyświetlenie tekstu czcionką większą, niż zwykły akapit:",
+    a: [
+      "<B>tekst</B>",
+      "<H2>tekst</H2>",
+      "<A1>tekst</A1>",
+      "<FONT SIZE=\"3\">tekst</FONT>"
+    ],
+    correct: 1
+  },
+  {
+    q: "O czym należy pamiętać pisząc własną funkcję?",
+    a: [
+      "w PHP funkcje muszą być zadeklarowane przed ich użyciem; funkcje mogą przyjmować argumenty lub nie przyjmować żadnych argumentów; funkcje mogą zwracać jakąś wartość lub nie",
+      "w PHP funkcje muszą być zadeklarowane przed użyciem; funkcje nie mogą przyjmować argumentów; funkcje muszą zwracać wartości",
+      "w PHP funkcje muszą być zadeklarowane w czasie ich użycia; funkcje mogą przyjmować argumenty lub nie przyjmować żadnych argumentów; funkcje nie mogą zwracać żadnej wartości",
+      "w PHP funkcje muszą być zadeklarowane przed ich użyciem; funkcje muszą przyjmować argumenty; funkcje nie mogą zwracać żadnej wartości"
+    ],
+    correct: 0
+  },
+  {
+    q: "W celu zmiany w tabeli 'pracownicy' imienia Kowalskiego na Jan należy posłużyć się następującym poleceniem SQL:",
+    a: [
+      "INSERT INTO pracownicy ('imie', 'nazwisko') VALUES ('Jan', 'Kowalski');",
+      "MODIFY pracownicy INSERT imie='Jan' WHERE nazwisko='Kowalski';",
+      "UPDATE pracownicy SET imie='Jan' WHERE nazwisko='Kowalski';",
+      "INSERT INTO pracownicy VALUES (imie='Jan', nazwisko='Kowalski');"
+    ],
+    correct: 2
+  },
+  {
+    q: "Która z poniższych odpowiedzi przedstawia budowę typowego dokumentu HTML?",
+    a: [
+      "<HTML> <HEAD> <TITLE>tytuł</TITLE> </HEAD> <BODY> </BODY> </HTML>",
+      "<HTML> <HEAD> </HEAD> <TITLE>tytuł</TITLE> <BODY> </BODY>",
+      "<HTML> <HEAD> </HEAD> <BODY> <TITLE>tytuł</TITLE> </BODY> </HTML>",
+      "<HTML> <HEAD> </HEAD> <BODY> <TITLE>(? Tytuł ?)</TITLE> </BODY> </HTML>"
+    ],
+    correct: 0
+  },
+  {
+    q: "Co rozumiemy przez pojęcie DECIMAL?",
+    a: [
+      "kolumna binarna lub tekstowa o rozmiarze nie przekraczającym 255 bajtów",
+      "pole zmiennoprzecinkowe o takiej samej pojemności jak DOUBLE. Liczba zamiast zostać zredukowana do postaci szesnastkowej, pamiętana jest w formacie znakowym",
+      "pole znakowe o stałej długości wynoszącej 255 bajtów",
+      "pole znakowe o zmiennej długości z zakresu od 1 do 255 bajtów. Zajmowany jest taki obszar pamięci jakiego wymaga wartość wsuwana w to pole"
+    ],
+    correct: 1
+  },
+  {
+    q: "Który z niżej wymienionych znaczników HTML nie jest związany z tworzeniem list:",
+    a: [
+      "<UL>",
+      "<OL>",
+      "<LI>",
+      "<KL>"
+    ],
+    correct: 3
+  },
+  {
+    q: "Język do wybierania i manipulowania danymi DML (Data Manipulation Language) służy do (wariant z koloForm):",
+    a: [
+      "jest używany głównie przez administratorów systemu baz danych do nadawania odpowiednich uprawnień do korzystania z bazy danych",
+      "służy do zarządzania danymi umieszczonymi w tabelach",
+      "jest wykorzystywany do wszelkiego rodzaju operacji na tabelach, takich jak: tworzenie, modyfikacja oraz usuwanie",
+      "służy do modyfikacji zawartości tabel"
+    ],
+    correct: 1
+  },
+  {
+    q: "Pod pojęciem obiektu w języku PHP rozumiemy:",
+    a: [
+      "Zbiór danych oraz funkcji operujących na tych danych obudowanych jedną strukturą",
+      "Pojedynczą zmienną przechowującą wartość liczbową",
+      "Tablicę asocjacyjną",
+      "Funkcję bez argumentów"
+    ],
+    correct: 0
+  },
+  {
+    q: "Co to jest przeglądarka?",
+    a: [
+      "Jest programem, który na wysyłane żądanie odbiera z serwera gotowy dokument HTML (za pośrednictwem protokołu http) i dokonuje jego wizualizacji",
+      "Jest serwerem przechowującym strony WWW",
+      "Jest językiem skryptowym",
+      "Jest protokołem komunikacyjnym"
+    ],
+    correct: 0
+  },
+  {
+    q: "Warunki wyboru podawane za WHERE:",
+    a: [
+      "Można łączyć ze sobą stosując operatory AND oraz OR, dzięki czemu istnieje możliwość zbudowania zapytania bardziej złożonego i dokładnego",
+      "Nie można łączyć ze sobą",
+      "Można łączyć tylko operatorem AND",
+      "Można łączyć tylko operatorem OR"
+    ],
+    correct: 0
+  },
+  {
+    q: "Które z poniższych odpowiedzi tworzy tabelę w języku SQL zawierającą: imię, nazwisko, datę urodzenia, adres, zarobki?",
+    a: [
+      "CREATE TABLE pracownicy (imie VARCHAR(30), nazwisko VARCHAR(30), data_ur DATE, adres VARCHAR, zarobki INT)",
+      "NEW TABLE pracownicy (imie, nazwisko, data_ur, adres, zarobki)",
+      "INSERT TABLE pracownicy (imie, nazwisko, data_ur, adres, zarobki)",
+      "MAKE TABLE pracownicy (imie, nazwisko, data_ur, adres, zarobki)"
+    ],
+    correct: 0
+  }
+];
+
+const LETTERS = ['A','B','C','D','E','F'];
+const baseOrder = QUESTIONS.map((_,i)=>i);
+let order = baseOrder.slice();     // aktualny zestaw pytań: pełny albo tylko błędne
+let answered = {};                 // qIndex -> wybrana odpowiedź
+let current = 0;                   // obecna pozycja w aktualnym zestawie
+let wrongMode = false;             // czy przerabiamy tylko błędne
+let randomAnswers = false;          // czy losować kolejność odpowiedzi A-D
+let answerOrderMap = {};            // qIndex -> wylosowana kolejność indeksów odpowiedzi
+
+const quizEl = document.getElementById('quiz');
+const summaryEl = document.getElementById('summary');
+const navEl = document.getElementById('nav');
+const retryWrongBtn = document.getElementById('retryWrongBtn');
+const modeLabelEl = document.getElementById('modeLabel');
+const shuffleAnswersToggle = document.getElementById('shuffleAnswersToggle');
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+// zamien fragmenty kodu (tagi html, php) na <code>
+function fmt(s){
+  let e = esc(s);
+  // owin sekwencje wygladajace na kod/tagi
+  e = e.replace(/(&lt;[^&]*?&gt;|\$[A-Za-z_][\w\[\]\$]*|&lt;\?[\s\S]*?\?&gt;|SELECT [\s\S]*$|INSERT [\s\S]*$|UPDATE [\s\S]*$|DELETE [\s\S]*$|CREATE [\s\S]*$|mysql_\w+|echo [^;]*)/g, m=>'<code>'+m+'</code>');
+  return e;
+}
+
+function hasAnswer(qi){
+  return Object.prototype.hasOwnProperty.call(answered, qi);
+}
+
+function getAnsweredInActiveSet(){
+  return order.filter(qi=>hasAnswer(qi));
+}
+
+function getWrongInActiveSet(){
+  return order.filter(qi=>hasAnswer(qi) && answered[qi] !== QUESTIONS[qi].correct);
+}
+
+function clearSummary(){
+  summaryEl.className='hidden';
+  summaryEl.innerHTML='';
+}
+
+function shuffledCopy(arr){
+  const copy = arr.slice();
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function clearAnswerOrders(){
+  answerOrderMap = {};
+}
+
+function getAnswerOrder(qi){
+  const base = QUESTIONS[qi].a.map((_,i)=>i);
+  if(!randomAnswers) return base;
+  if(!answerOrderMap[qi]) answerOrderMap[qi] = shuffledCopy(base);
+  return answerOrderMap[qi];
+}
+
+function render(){
+  if(order.length===0){
+    quizEl.innerHTML='<div class="done"><h2>Brak pytań do wyświetlenia.</h2></div>';
+    updateStats();
+    updateNav();
+    return;
+  }
+  if(current<0) current=0;
+  if(current>order.length-1) current=order.length-1;
+
+  const qi = order[current];
+  const q = QUESTIONS[qi];
+  quizEl.innerHTML='';
+  const card = document.createElement('div');
+  card.className='card';
+  card.id='card-'+qi;
+  let opts='';
+  getAnswerOrder(qi).forEach((oi,pos)=>{
+    const opt = q.a[oi];
+    opts += `<button class="opt" data-q="${qi}" data-o="${oi}" data-pos="${pos}">
+      <span class="letter">${LETTERS[pos]}</span>
+      <span class="otext">${fmt(opt)}</span></button>`;
+  });
+  card.innerHTML = `
+    <div class="qhead">
+      <span class="qnum">${current+1}</span>
+      <span class="qtext">${fmt(q.q)}</span>
+    </div>
+    <div class="opts">${opts}</div>`;
+  quizEl.appendChild(card);
+
+  // przywróć stan, gdy użytkownik wraca do pytania
+  if(hasAnswer(qi)) applyState(qi, answered[qi]);
+  bind();
+  updateStats();
+  updateNav();
+}
+
+function updateNav(){
+  modeLabelEl.textContent = wrongMode ? 'błędne' : 'pełny';
+  document.getElementById('navnum').textContent=order.length ? current+1 : 0;
+  document.getElementById('navtot').textContent=order.length;
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===order.length-1 || order.length===0;
+}
+
+function go(delta){
+  const t = current+delta;
+  if(t<0 || t>order.length-1) return;
+  current = t;
+  render();
+}
+
+function bind(){
+  document.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const qi=+b.dataset.q, oi=+b.dataset.o;
+      if(hasAnswer(qi)) return; // już odpowiedziano, zablokuj zmianę
+      answered[qi]=oi;
+      applyState(qi,oi);
+      updateStats();
+    });
+  });
+}
+
+function applyState(qi,chosen){
+  const q=QUESTIONS[qi];
+  const card=document.getElementById('card-'+qi);
+  if(!card) return;
+  card.querySelectorAll('.opt').forEach(b=>{
+    const oi=+b.dataset.o;
+    b.classList.add('locked');
+    if(oi===q.correct){
+      b.classList.add('correct');
+      if(!b.querySelector('.mark.ok')) b.insertAdjacentHTML('beforeend','<span class="mark ok">✓</span>');
+    }
+    if(oi===chosen && chosen!==q.correct){
+      b.classList.add('wrong');
+      if(!b.querySelector('.mark.no')) b.insertAdjacentHTML('beforeend','<span class="mark no">✗</span>');
+    }
+  });
+}
+
+function updateStats(){
+  const total=order.length;
+  const answeredList=getAnsweredInActiveSet();
+  const ans=answeredList.length;
+  let correct=0;
+  answeredList.forEach(qi=>{ if(answered[qi]===QUESTIONS[qi].correct) correct++; });
+  const wrongQs=getWrongInActiveSet();
+  const wrong=wrongQs.length;
+
+  document.getElementById('total').textContent=total;
+  document.getElementById('answered').textContent=ans;
+  document.getElementById('correct').textContent=correct;
+  document.getElementById('wrong').textContent=wrong;
+  document.getElementById('pbar').style.width=(total ? ans/total*100 : 0)+'%';
+
+  // przycisk działa tylko wtedy, gdy w aktualnym zestawie są już błędne odpowiedzi
+  retryWrongBtn.disabled = wrong===0;
+
+  if(ans===total && total>0) showSummary(correct,total,wrongQs);
+  else clearSummary();
+}
+
+function showSummary(correct,total,wrongQs){
+  const pct=Math.round(correct/total*100);
+  const wrong=wrongQs.length;
+  let msg = pct>=90?'Świetnie! 🎉':pct>=70?'Dobra robota 👍':pct>=50?'Nieźle, douczaj się 📚':'Powtórz materiał 💪';
+  summaryEl.className='done';
+  summaryEl.innerHTML=`<div class="score" style="color:${pct>=70?'var(--ok)':pct>=50?'var(--gold)':'var(--bad)'}">${correct}/${total} · ${pct}%</div>
+    <h2>${wrongMode ? 'Powtórka błędnych zakończona' : msg}</h2>
+    <div class="hint">${wrong ? 'Kliknij „Przerób błędne”, aby uruchomić nowy zestaw tylko z pytaniami, na które odpowiedziałeś źle.' : 'Nie masz błędnych odpowiedzi w tym zestawie.'}</div>
+    <div class="summary-actions">
+      <button class="primary" data-action="reset-active">Zacznij ten zestaw od nowa</button>
+      <button data-action="retry-wrong" ${wrong ? '' : 'disabled'}>↺ Przerób błędne</button>
+      <button data-action="full-test">Pełny test</button>
+    </div>`;
+  summaryEl.scrollIntoView({behavior:'smooth'});
+}
+
+function startWrongSet(wrongQs){
+  order = wrongQs.slice();
+  answered = {};
+  clearAnswerOrders();
+  current = 0;
+  wrongMode = true;
+  clearSummary();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function retryWrong(){
+  const wrongQs = getWrongInActiveSet();
+  if(!wrongQs.length){
+    alert('Nie ma błędnych odpowiedzi do przerobienia.');
+    return;
+  }
+  startWrongSet(wrongQs);
+}
+
+function shuffle(){
+  answered={};
+  clearAnswerOrders();
+  clearSummary();
+  for(let i=order.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [order[i],order[j]]=[order[j],order[i]];
+  }
+  current=0;
+  render();
+}
+
+function resetActive(rerender=true){
+  answered={};
+  clearAnswerOrders();
+  current=0;
+  clearSummary();
+  if(rerender) render();
+}
+
+function startFullTest(){
+  order=baseOrder.slice();
+  wrongMode=false;
+  resetActive();
+}
+
+function reset(){
+  startFullTest();
+}
+
+window.reset=reset;
+window.resetActive=resetActive;
+window.startFullTest=startFullTest;
+window.retryWrong=retryWrong;
+
+document.getElementById('retryWrongBtn').addEventListener('click',retryWrong);
+document.getElementById('shuffleBtn').addEventListener('click',shuffle);
+shuffleAnswersToggle.addEventListener('change',()=>{
+  randomAnswers = shuffleAnswersToggle.checked;
+  resetActive();
+});
+document.getElementById('resetBtn').addEventListener('click',reset);
+document.getElementById('prevBtn').addEventListener('click',()=>go(-1));
+document.getElementById('nextBtn').addEventListener('click',()=>go(1));
+summaryEl.addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-action]');
+  if(!btn) return;
+  if(btn.dataset.action==='retry-wrong') retryWrong();
+  if(btn.dataset.action==='reset-active') resetActive();
+  if(btn.dataset.action==='full-test') startFullTest();
+});
+
+// nawigacja strzalkami klawiatury
+// cyfry 1-6 wybierają widoczną odpowiedź od góry
+// UWAGA: w trybie błędnych strzałki poruszają się tylko po błędnych pytaniach.
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'){go(-1);}
+  else if(e.key==='ArrowRight'){go(1);}
+  else if(/^[1-6]$/.test(e.key)){
+    const idx=+e.key-1;
+    const btn=document.querySelector(`.opt[data-pos="${idx}"]`);
+    if(btn) btn.click();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
