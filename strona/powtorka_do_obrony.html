@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Powtórka do obrony strony</title>
+    <style>
+        .revision-page {
+            max-width: 1000px;
+        }
+
+        .revision-page h1 {
+            margin-bottom: 10px;
+        }
+
+        .revision-page h2 {
+            margin-top: 32px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #d89a5b;
+        }
+
+        .revision-page h3 {
+            margin-top: 20px;
+        }
+
+        .revision-page p,
+        .revision-page li {
+            line-height: 1.6;
+        }
+
+        .revision-page code {
+            background: #f6eadc;
+            border: 1px solid #e3b07a;
+            border-radius: 4px;
+            padding: 2px 5px;
+        }
+
+        .revision-page ul {
+            padding-left: 24px;
+        }
+
+        .revision-nav {
+            background: #fff4e8;
+            border: 1px solid #e2a66c;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .revision-nav a {
+            display: inline-block;
+            margin: 4px 8px 4px 0;
+        }
+
+        .top-button {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <a href="index.html">Strona główna</a>
+    <a href="#html">HTML</a>
+    <a href="#css">CSS</a>
+    <a href="#php">PHP</a>
+    <a href="#baza">Baza danych</a>
+    <a href="#pytania">Pytania</a>
+    <a href="#checklista">Checklista</a>
+</div>
+
+<div class="container revision-page">
+    <div class="revision-nav">
+        <strong>Szybka nawigacja:</strong><br>
+        <a href="#html">HTML</a>
+        <a href="#css">CSS</a>
+        <a href="#formularze">Formularze</a>
+        <a href="#php">PHP</a>
+        <a href="#kalkulator">Kalkulator</a>
+        <a href="#losowanie">Losowanie</a>
+        <a href="#baza">MySQL</a>
+        <a href="#serwer">Serwer</a>
+        <a href="#pytania">Pytania prowadzącego</a>
+        <a href="#checklista">Checklista</a>
+    </div>
+
+    <section id="tresc">
+        <h1>POWTÓRKA DO OBRONY STRONY WWW</h1>
+<h2>1. Krótkie przedstawienie projektu</h2>
+<p>„Moja strona jest prostym portalem wykonanym w HTML, CSS i PHP. Strona główna zawiera menu, odnośniki do sprawozdań, grafiki, formularz i stopkę. Dodatkowe podstrony realizują kalkulator, losowanie w PHP oraz obsługę bazy danych MySQL. Strona jest umieszczona w katalogu public_html na serwerze zajęciowym i działa przez serwer WWW.”</p>
+<h2>2. Najważniejsze pliki</h2>
+<ul>
+<li>index.html – strona główna.</li>
+<li>style.css – wygląd wszystkich stron.</li>
+<li>raport1.html–raport9.html – sprawozdania.</li>
+<li>kalkulator.php – obliczenia po stronie serwera.</li>
+<li>losowanie.php – zadanie z laboratorium 8.</li>
+<li>baza.php – formularz i baza MySQL.</li>
+<li>favicon.png – ikona karty.</li>
+<li>img/ – grafiki.</li>
+<li>lyricpost/ – osobna podstrona/aplikacja.</li>
+</ul>
+<h3>Dlaczego `index.html`?</h3>
+<p>Serwer WWW domyślnie szuka pliku <code>index.html</code> lub <code>index.php</code>, gdy użytkownik podaje adres katalogu bez nazwy pliku.</p>
+<h2>3. HTML</h2>
+<h3>Czym jest HTML?</h3>
+<p>Opisuje strukturę i zawartość strony: nagłówki, tekst, obrazy, formularze, tabele i linki.</p>
+<h3>Co robi `&lt;!DOCTYPE html&gt;`?</h3>
+<p>Informuje przeglądarkę, że dokument korzysta z HTML5.</p>
+<h3>Po co jest `&lt;head&gt;`?</h3>
+<p>Zawiera kodowanie, tytuł karty, podłączenie CSS, favicon i ustawienia responsywności.</p>
+<h3>Po co UTF-8?</h3>
+<p><code>&lt;meta charset=&quot;UTF-8&quot;&gt;</code> zapewnia poprawne wyświetlanie polskich znaków.</p>
+<h3>`id` a `class`</h3>
+<ul>
+<li>id jest unikalne i może być celem linku, np. #stopka.</li>
+<li>class może być użyta przez wiele elementów i służy do wspólnego stylowania.</li>
+</ul>
+<h3>Jak działa link?</h3>
+<p><code>&lt;a href=&quot;raport1.html&quot;&gt;Raport 1&lt;/a&gt;</code> otwiera wskazany plik.</p>
+<h3>Ścieżka względna i bezwzględna</h3>
+<ul>
+<li>względna: img/kot.jpg,</li>
+<li>bezwzględna: pełny adres https://....</li>
+</ul>
+<h3>Link do sekcji</h3>
+<p><code>&lt;a href=&quot;#stopka&quot;&gt;Na dół&lt;/a&gt;</code> przewija do elementu z <code>id=&quot;stopka&quot;</code>.</p>
+<h3>Po co `alt`?</h3>
+<p>Opisuje obraz, gdy grafika się nie załaduje, i poprawia dostępność.</p>
+<h3>Dlaczego wielkość liter jest ważna?</h3>
+<p>Linux rozróżnia <code>Kot.jpg</code> i <code>kot.jpg</code>.</p>
+<h2>4. CSS</h2>
+<h3>Czym jest CSS?</h3>
+<p>Odpowiada za kolory, układ, odstępy, rozmiary i responsywność.</p>
+<h3>Dlaczego osobny `style.css`?</h3>
+<p>Oddziela treść od wyglądu, zmniejsza powtarzanie kodu i pozwala zmienić styl wszystkich stron w jednym miejscu.</p>
+<h3>Dlaczego spokojny pomarańczowy?</h3>
+<p>To jednolity motyw wizualny. Elementy interaktywne są widoczne, ale kolor nie jest krzykliwy.</p>
+<h3>Jak działa sidebar?</h3>
+<p>Zwykle ma <code>position: fixed</code>, więc pozostaje widoczny. Treść ma <code>margin-left</code>, żeby nie wejść pod menu.</p>
+<h3>Co robi `display: grid`?</h3>
+<p>Tworzy układ wierszy i kolumn, np. kafelki raportów i galerię.</p>
+<h3>Co oznacza responsywność?</h3>
+<p>Strona dopasowuje się do szerokości ekranu. Pomagają <code>max-width</code>, grid/flex, <code>@media</code> i viewport.</p>
+<h3>Co robi `!important`?</h3>
+<p>Wymusza pierwszeństwo reguły CSS. Należy używać go oszczędnie.</p>
+<h2>5. Formularze</h2>
+<p>Formularz pobiera dane od użytkownika.</p>
+<p>Najważniejsze:</p>
+<ul>
+<li>action – dokąd wysłać dane,</li>
+<li>method – jak je wysłać,</li>
+<li>name – nazwa pola dla PHP,</li>
+<li>submit – przycisk wysyłający.</li>
+</ul>
+<h3>GET a POST</h3>
+<ul>
+<li>GET umieszcza dane w URL i nadaje się do odczytu, wyszukiwania i filtrów.</li>
+<li>POST przesyła dane w treści żądania i nadaje się do dodawania, usuwania i zmiany danych.</li>
+</ul>
+<p>POST nie szyfruje danych. Szyfrowanie zapewnia HTTPS.</p>
+<h3>Po co `name`?</h3>
+<p>PHP odczytuje wartość przez <code>$_POST[&quot;nazwa_pola&quot;]</code>.</p>
+<h3>Pole hidden</h3>
+<p>Jest niewidoczne, ale wysyła wartość, np. identyfikator rekordu do usunięcia.</p>
+<h2>6. PHP</h2>
+<h3>Czym jest PHP?</h3>
+<p>Język wykonywany po stronie serwera. Serwer wykonuje kod i wysyła przeglądarce gotowy HTML.</p>
+<h3>Dlaczego rozszerzenie `.php`?</h3>
+<p>Serwer rozpoznaje wtedy, że plik ma zostać wykonany przez PHP.</p>
+<h3>Dlaczego PHP nie działa po dwukliku?</h3>
+<p>Otwarcie lokalne omija serwer. Plik trzeba otworzyć przez adres HTTP serwera.</p>
+<h3>`echo`</h3>
+<p>Wyświetla tekst lub HTML.</p>
+<h3>`if`</h3>
+<p>Wykonuje kod po spełnieniu warunku.</p>
+<h3>`switch`</h3>
+<p>Wybiera jeden z kilku wariantów.</p>
+<h3>`for`</h3>
+<p>Powtarza kod określoną liczbę razy.</p>
+<h3>`isset()`</h3>
+<p>Sprawdza, czy zmienna lub pole formularza istnieje.</p>
+<h3>`$_POST`</h3>
+<p>Tablica zawierająca dane z formularza wysłanego metodą POST.</p>
+<h3>Dlaczego PHP jest przed HTML-em?</h3>
+<p><code>header(&quot;Location: ...&quot;)</code> musi wykonać się przed wysłaniem treści HTML.</p>
+<h2>7. Kalkulator</h2>
+<p>Logika:</p>
+<p>1. Użytkownik podaje dwie liczby.</p>
+<p>2. Wybiera działanie.</p>
+<p>3. Formularz wysyła dane przez POST.</p>
+<p>4. PHP odczytuje dane.</p>
+<p>5. <code>switch</code> lub <code>if</code> wybiera obliczenie.</p>
+<p>6. Wynik jest wyświetlany.</p>
+<h3>Dlaczego sprawdzamy dzielenie przez zero?</h3>
+<p>Dzielenie przez zero jest niedozwolone, więc program pokazuje komunikat.</p>
+<h3>Dlaczego PHP?</h3>
+<p>HTML nie wykonuje obliczeń. PHP przetwarza dane po stronie serwera.</p>
+<h2>8. Losowanie z laboratorium 8</h2>
+<p>Logika:</p>
+<p>1. Losowana jest liczba powtórzeń pętli.</p>
+<p>2. W każdej iteracji losowane są A i B z zakresu 1–3.</p>
+<p>3. Losowane jest 0 albo 1:</p>
+<ul>
+<li>0: A + B,</li>
+<li>1: A * B.</li>
+</ul>
+<p>4. Wynik mieści się w zakresie 1–9.</p>
+<p>5. Wynik wskazuje literę w dziewięcioliterowym wyrazie, np. <code>KOMPUTERY</code>.</p>
+<p>6. Do litery przypisany jest komunikat.</p>
+<p>7. Wyniki są pokazane:</p>
+<ul>
+<li>bezpośrednio w pętli,</li>
+<li>po zgromadzeniu ich w zmiennej i użyciu echo.</li>
+</ul>
+<h3>Jaki jest sens?</h3>
+<p>Ćwiczenie łączy losowanie, pętle, warunki, działania matematyczne, tekst i generowanie HTML przez PHP.</p>
+<h3>Dlaczego 9 liter?</h3>
+<p>Największy wynik to <code>3 * 3 = 9</code>.</p>
+<h2>9. MySQL i baza danych</h2>
+<h3>Czym jest baza?</h3>
+<p>Uporządkowany zbiór danych przechowywany w tabelach.</p>
+<h3>Tabela, kolumna, rekord</h3>
+<ul>
+<li>tabela – zbiór danych,</li>
+<li>kolumna – typ informacji,</li>
+<li>rekord – jeden wiersz, np. jedna osoba.</li>
+</ul>
+<h3>Po co `id`?</h3>
+<p>Jednoznacznie identyfikuje rekord.</p>
+<h3>`PRIMARY KEY`</h3>
+<p>Oznacza unikalny klucz główny.</p>
+<h3>`AUTO_INCREMENT`</h3>
+<p>Automatycznie nadaje kolejne <code>id</code>.</p>
+<h3>Podstawowe SQL</h3>
+<ul>
+<li>CREATE TABLE – tworzy tabelę,</li>
+<li>INSERT – dodaje rekord,</li>
+<li>SELECT – pobiera dane,</li>
+<li>UPDATE – zmienia dane,</li>
+<li>DELETE – usuwa rekord,</li>
+<li>TRUNCATE – usuwa wszystkie rekordy i resetuje numerację,</li>
+<li>DROP TABLE – usuwa tabelę.</li>
+</ul>
+<h3>Przepływ w `baza.php`</h3>
+<p>1. Formularz wysyła POST.</p>
+<p>2. PHP łączy się z MySQL.</p>
+<p>3. PHP wykonuje <code>INSERT</code>.</p>
+<p>4. Następuje przekierowanie.</p>
+<p>5. PHP wykonuje <code>SELECT</code>.</p>
+<p>6. Dane są pokazane w tabeli HTML.</p>
+<h3>Jak działa usuwanie?</h3>
+<p>Przycisk przesyła ukryte <code>usun_id</code>. PHP wykonuje <code>DELETE ... WHERE id = ...</code>.</p>
+<h3>Dlaczego odświeżenie dodawało duplikat?</h3>
+<p>Przeglądarka ponawiała ostatni POST, więc <code>INSERT</code> wykonywał się drugi raz.</p>
+<h3>Jak to naprawiono?</h3>
+<p>Schemat POST–Redirect–GET:</p>
+<p>1. POST dodaje rekord.</p>
+<p>2. PHP wykonuje <code>header(&quot;Location: baza.php&quot;)</code>.</p>
+<p>3. Przeglądarka przechodzi metodą GET.</p>
+<p>4. Odświeżenie nie powtarza INSERT.</p>
+<h3>Najważniejsze funkcje mysqli</h3>
+<ul>
+<li>mysqli_connect() – połączenie,</li>
+<li>mysqli_set_charset() – kodowanie,</li>
+<li>mysqli_select_db() – wybór bazy,</li>
+<li>mysqli_query() – wykonanie SQL,</li>
+<li>mysqli_fetch_array() – pobieranie rekordów,</li>
+<li>mysqli_close() – zamknięcie połączenia.</li>
+</ul>
+<h3>Bezpieczeństwo</h3>
+<p>W prawdziwej aplikacji należy użyć:</p>
+<ul>
+<li>prepared statements,</li>
+<li>walidacji,</li>
+<li>htmlspecialchars(),</li>
+<li>hasła do bazy poza katalogiem publicznym.</li>
+</ul>
+<h3>SQL Injection</h3>
+<p>Próba wstrzyknięcia kodu SQL przez formularz. Chronią prepared statements i walidacja.</p>
+<h2>10. Serwer</h2>
+<h3>Po co `public_html`?</h3>
+<p>Serwer WWW udostępnia pliki użytkownika z tego katalogu.</p>
+<h3>Droga żądania</h3>
+<p>Przeglądarka → serwer WWW → HTML/PHP → ewentualnie MySQL → wynik HTML → przeglądarka.</p>
+<h3>SSH a HTTP</h3>
+<ul>
+<li>SSH służy do bezpiecznej pracy na serwerze.</li>
+<li>HTTP/HTTPS służy do pobierania stron.</li>
+</ul>
+<h3>Dlaczego SSH zamiast Telnetu?</h3>
+<p>SSH szyfruje transmisję, login i hasło.</p>
+<h3>Po co prawa dostępu?</h3>
+<p>Serwer WWW musi móc wejść do katalogu i odczytać pliki.</p>
+<h2>11. HTTP</h2>
+<h3>URL</h3>
+<p>Przykład:</p>
+<p><code>http://mts.wibro.agh.edu.pl/~login/baza.php</code></p>
+<ul>
+<li>http – protokół,</li>
+<li>host – adres serwera,</li>
+<li>ścieżka – położenie pliku.</li>
+</ul>
+<h3>HTTP jest bezstanowy</h3>
+<p>Każde żądanie jest niezależne. Stan utrzymuje się przez sesje, cookie lub bazę.</p>
+<h3>HTTP a HTTPS</h3>
+<p>HTTPS to HTTP przez szyfrowane TLS.</p>
+<h3>Cookie</h3>
+<p>Małe dane zapisane przez przeglądarkę, np. do logowania lub ustawień.</p>
+<h2>12. Favicon i grafiki</h2>
+<h3>Favicon</h3>
+<p><code>&lt;link rel=&quot;icon&quot; type=&quot;image/png&quot; href=&quot;favicon.png&quot;&gt;</code></p>
+<h3>Dlaczego nowej ikony lub CSS czasem nie widać?</h3>
+<p>Przeglądarka korzysta z cache. Pomaga <code>Ctrl + F5</code>.</p>
+<h3>Dlaczego grafika nie działa?</h3>
+<p>Najczęściej:</p>
+<ul>
+<li>zła ścieżka,</li>
+<li>zła nazwa,</li>
+<li>inna wielkość liter,</li>
+<li>brak pliku,</li>
+<li>brak prawa odczytu.</li>
+</ul>
+<h2>13. LyricPost</h2>
+<p>Jeżeli aplikacja jest w <code>lyricpost/index.html</code>, link może wyglądać:</p>
+<p><code>&lt;a href=&quot;lyricpost/&quot;&gt;Otwórz LyricPost&lt;/a&gt;</code>.</p>
+<p>Folder ma własny <code>index.html</code>, więc serwer otworzy go automatycznie.</p>
+<p>Przy cudzym projekcie trzeba zachować autora i licencję.</p>
+<h2>14. Prawdopodobne pytania prowadzącego</h2>
+<h3>Dlaczego HTML i CSS osobno?</h3>
+<p>Aby oddzielić treść od wyglądu i nie powtarzać stylów.</p>
+<h3>Dlaczego PHP?</h3>
+<p>Kalkulator, losowanie i baza wymagają logiki po stronie serwera.</p>
+<h3>Po co baza?</h3>
+<p>Dane są trwałe i pozostają po zamknięciu przeglądarki.</p>
+<h3>Dlaczego usuwanie po `id`?</h3>
+<p>Bo <code>id</code> jednoznacznie wskazuje rekord.</p>
+<h3>Dlaczego POST do dodawania i usuwania?</h3>
+<p>Bo te operacje zmieniają stan bazy.</p>
+<h3>Dlaczego przekierowanie po INSERT?</h3>
+<p>Aby odświeżenie nie tworzyło duplikatu.</p>
+<h3>Dlaczego PHP przed HTML?</h3>
+<p>Aby obsłużyć formularz i nagłówek <code>Location</code> przed wysłaniem treści.</p>
+<h3>Dlaczego `#id` w menu?</h3>
+<p>Umożliwia przewijanie do sekcji bez ładowania nowej strony.</p>
+<h3>Dlaczego UTF-8?</h3>
+<p>Dla poprawnych polskich znaków w HTML, PHP i bazie.</p>
+<h3>Co dzieje się po kliknięciu „Dodaj”?</h3>
+<p>POST → PHP → INSERT → przekierowanie → SELECT → tabela HTML.</p>
+<h3>Co dzieje się po kliknięciu „Usuń”?</h3>
+<p>POST z <code>id</code> → DELETE → przekierowanie → aktualna lista.</p>
+<h3>Czy formularz jest bezpieczny?</h3>
+<p>W wersji laboratoryjnej działa, ale produkcyjnie potrzebne są prepared statements, walidacja i filtrowanie.</p>
+<h2>15. Polecenia do zapamiętania</h2>
+<p>Serwer:</p>
+<p><code>pwd</code></p>
+<p><code>ls -la</code></p>
+<p><code>cd ~/public_html</code></p>
+<p><code>chmod o+x ~</code></p>
+<p><code>chmod o+rx ~/public_html</code></p>
+<p>MySQL:</p>
+<p><code>mysql -u sNUMER -p</code></p>
+<p>SQL:</p>
+<p><code>USE sNUMER;</code></p>
+<p><code>SHOW TABLES;</code></p>
+<p><code>DESCRIBE kontakty;</code></p>
+<p><code>SELECT * FROM kontakty;</code></p>
+<p><code>DELETE FROM kontakty WHERE id = 3;</code></p>
+<h2>16. Checklista przed obroną</h2>
+<ul>
+<li>Strona główna działa.</li>
+<li>Linki do raportów działają.</li>
+<li>CSS się ładuje.</li>
+<li>Grafiki i favicon działają.</li>
+<li>Menu przewija do sekcji.</li>
+<li>Stopka jest widoczna.</li>
+<li>Kalkulator działa i obsługuje dzielenie przez zero.</li>
+<li>Losowanie pokazuje wyniki na dwa sposoby.</li>
+<li>Baza dodaje rekord.</li>
+<li>Odświeżenie nie dodaje duplikatu.</li>
+<li>Przycisk „Usuń” działa.</li>
+<li>Polskie znaki działają.</li>
+<li>Hasło do MySQL nie jest pokazywane.</li>
+<li>Umiesz opowiedzieć: formularz → PHP → SQL → HTML.</li>
+</ul>
+<h2>17. Odpowiedź w 20 sekund</h2>
+<p>„Zbudowałem nawigowalny portal w HTML i CSS, opublikowałem go w katalogu public_html, a następnie rozszerzyłem o PHP. Kalkulator przetwarza formularz, losowanie realizuje pętle i instrukcje warunkowe, a moduł MySQL pozwala dodawać, wyświetlać i usuwać rekordy. Po zmianie danych stosuję przekierowanie, żeby odświeżenie strony nie powtarzało operacji.”</p>
+    </section>
+
+    <p>
+        <a href="index.html"><button type="button">Wróć na stronę główną</button></a>
+    </p>
+</div>
+
+<a class="top-button" href="#tresc"><button type="button">Do góry</button></a>
+
+<script>
+document.querySelectorAll("h2").forEach(function(heading) {
+    const text = heading.textContent.toLowerCase();
+
+    if (text.includes("html")) heading.id = "html";
+    else if (text.includes("css")) heading.id = "css";
+    else if (text.includes("formularz")) heading.id = "formularze";
+    else if (text === "6. php") heading.id = "php";
+    else if (text.includes("kalkulator")) heading.id = "kalkulator";
+    else if (text.includes("losowanie")) heading.id = "losowanie";
+    else if (text.includes("mysql")) heading.id = "baza";
+    else if (text.includes("serwer")) heading.id = "serwer";
+    else if (text.includes("prawdopodobne pytania")) heading.id = "pytania";
+    else if (text.includes("checklista")) heading.id = "checklista";
+});
+</script>
+
+</body>
+</html>
