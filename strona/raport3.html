@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Sprawozdanie z laboratorium nr 3</title>
+</head>
+<body>
+<div class="report-container">
+    <h1 id="sprawozdanie-lab-3">Sprawozdanie z laboratorium nr 3</h1>
+    <p><a href="index.html"><button>Strona główna</button></a></p>
+    <p>
+        <strong>Temat:</strong> Protokoły przesyłania plików
+    </p>
+
+<h2>Cel i zakres</h2><p>Celem ćwiczenia było praktyczne poznanie protokołów i narzędzi przesyłania plików: sFTP przez <code>psftp.exe</code>, kopiowania przez <code>pscp.exe</code> i <code>scp</code>, klienta WinSCP oraz konfiguracji lokalnego serwera FTP FileZilla Server.</p><h2>Przesyłanie plików przez PSFTP</h2><p>Po pobraniu narzędzi z pakietu PuTTY uruchomiono <code>psftp.exe</code> i połączono się z kontem na serwerze zajęciowym.</p><pre><code>psftp sNumerIndeksu@mts.wibro.agh.edu.pl
+pwd
+lpwd
+put dane.txt
+put obraz1.jpg
+put obraz2.png
+put obraz3.gif
+ls
+bye</code></pre><p>Utworzony plik tekstowy zawierał dane identyfikacyjne oraz test polskich znaków: <em>ą, ć, ę, ł, ń, ó, ś, ż, ź</em>. Poprawne kodowanie sprawdzono po stronie serwera i w WinSCP.</p><table><thead><tr><th>Plik</th><th>Źródło</th><th>Status wysłania</th></tr></thead><tbody><tr><td><code>dane.txt</code></td><td>utworzony lokalnie</td><td>wysłano poprawnie</td></tr><tr><td><code>obraz1.jpg</code></td><td>plik graficzny związany z zainteresowaniami</td><td>wysłano poprawnie</td></tr><tr><td><code>obraz2.png</code></td><td>plik graficzny związany z zainteresowaniami</td><td>wysłano poprawnie</td></tr><tr><td><code>obraz3.gif</code></td><td>plik graficzny związany z zainteresowaniami</td><td>wysłano poprawnie</td></tr></tbody></table><h2>Kopiowanie przez PSCP i porównanie procedur</h2><p>PSCP służy do jednorazowego kopiowania plików z linii poleceń. W odróżnieniu od PSFTP nie uruchamia interaktywnej sesji z komendami typu <code>put</code>, <code>get</code>, <code>ls</code>.</p><pre><code>pscp dane.txt sNumerIndeksu@mts.wibro.agh.edu.pl:~/
+pscp obraz1.jpg obraz2.png obraz3.gif sNumerIndeksu@mts.wibro.agh.edu.pl:~/
+mkdir tmp
+pscp sNumerIndeksu@mts.wibro.agh.edu.pl:~/dane.txt tmp/</code></pre><table><thead><tr><th>Cecha</th><th>PSFTP</th><th>PSCP</th></tr></thead><tbody><tr><td>Tryb pracy</td><td>interaktywna sesja sFTP</td><td>jednorazowe polecenie kopiowania</td></tr><tr><td>Typowe użycie</td><td>przeglądanie katalogów, wiele operacji</td><td>szybkie kopiowanie pliku lub katalogu</td></tr><tr><td>Wygoda</td><td>wygodne przy ręcznej pracy</td><td>wygodne w skryptach i automatyzacji</td></tr><tr><td>Bezpieczeństwo</td><td>transmisja szyfrowana przez SSH</td><td>transmisja szyfrowana przez SSH</td></tr></tbody></table><h2>Kopiowanie przez SCP między serwerami</h2><p>Z serwera <code>mts</code> wykonano kopiowanie na konto na serwerze <code>student</code> poleceniem <code>scp</code>.</p><pre><code>scp dane.txt obraz1.jpg obraz2.png obraz3.gif username@student.agh.edu.pl:~/
+ssh username@student.agh.edu.pl
+ls -l</code></pre><p>Podczas pierwszego połączenia należało zaakceptować klucz hosta. Przy skonfigurowanej autentykacji kluczem RSA serwer może zezwolić na logowanie bez wpisywania hasła, ale tylko wtedy, gdy klucz publiczny znajduje się w <code>~/.ssh/authorized_keys</code> na serwerze docelowym.</p><h2>WinSCP, edytor i kodowanie znaków</h2><p>WinSCP skonfigurowano jako klient sFTP dla serwera <code>mts.wibro.agh.edu.pl</code>. W programie sprawdzono zawartość przesłanych plików i ustawiono zewnętrzny edytor obsługujący wybór kodowania znaków, np. Notepad++, VS Code lub Sublime Text.</p><table><thead><tr><th>Kodowanie</th><th>Efekt dla polskich znaków</th><th>Komentarz</th></tr></thead><tbody><tr><td>UTF-8</td><td>poprawne wyświetlanie</td><td>Zalecane kodowanie dla stron WWW i współczesnych systemów.</td></tr><tr><td>Windows-1250</td><td>poprawne wyświetlanie</td><td>Może wymagać zgodnego nagłówka lub konwersji.</td></tr><tr><td>ISO-8859-2</td><td>poprawne wyświetlanie</td><td>Starsze kodowanie środkowoeuropejskie.</td></tr></tbody></table><p>Po edycji pliku <code>index.html</code> stwierdzono, że zgodność kodowania pliku i deklaracji <code>&lt;meta charset="UTF-8"&gt;</code> jest warunkiem poprawnego wyświetlania znaków regionalnych.</p><h2>Konfiguracja FileZilla Server i wnioski</h2><p>W ramach konfiguracji lokalnej usługi FTP uruchomiono FileZilla Server z katalogu FZS, dodano użytkownika, przypisano mu katalog i przetestowano logowanie z klienta FTP.</p><ol><li>Uruchomiono <code>start_serwer.bat</code>.</li><li>W narzędziu administracyjnym dodano użytkownika oraz katalog z prawami odczytu/zapisu.</li><li>Połączono się przez <code>localhost</code>, a następnie przez adres IP komputera lokalnego.</li><li>Wysłano i pobrano plik testowy.</li><li>Serwer zatrzymano przez <code>stop_serwer.bat</code>.</li></ol><p class="note"><strong>Wniosek:</strong> narzędzia PSFTP/PSCP/SCP korzystają z bezpiecznej transmisji SSH, natomiast klasyczny FTP wymaga osobnej konfiguracji użytkowników i zasobów oraz nie zapewnia takiego poziomu poufności jak sFTP/SCP.</p>
+</div>
+</body>
+</html>

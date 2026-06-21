@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CHYBA DZIAŁA</title>
+</head>
+<body>
+
+<h1>Pozdrawiam (ąęóńżźść)</h1>
+<h2>Jakub Michałowski</h2>
+
+<p>To jest pierwszy paragraf tekstu.<b>wytłuszczone</b><i>pochylone</i>.</p>
+<p>Drugi paragraf z <u>podkreślone</u> i <span style="color:red;">kolorem czerwonym</span>.</p>
+
+<h3>Elementy graficzne</h3>
+<img src="https://frutigeraeroarchive.org/images/introduction/asadal.jpg" alt="Przykładowy obrazek">
+<img src="https://static.wikia.nocookie.net/aesthetics/images/5/5f/Asadal_design_graphics.jpg" alt="Mały obrazek">
+
+<h3>Elementy sterujące</h3>
+<button type="button" onclick="alert('No tu')">Tu</button>
+
+<form>
+  <label for="imie">Podaj imię:</label>
+  <input type="text" id="imie" name="imie" placeholder="Twoje imię"><br><br>
+  
+  <label for="wiek">Wiek:</label>
+  <input type="number" id="wiek" name="wiek" min="0" max="100"><br><br>
+  
+  <label for="plec">Płeć:</label>
+  <select id="plec" name="plec">
+    <option value="m">Mężczyzna</option>
+    <option value="k">Kobieta</option>
+  </select><br><br>
+  <input type="submit" value="Wyślij">
+</form>
+
+<h3>Tabelka</h3>
+<table border="1">
+  <tr>
+    <th>Imię</th>
+    <th>Nazwisko</th>
+    <th>Wiek</th</table>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fff7ee;
+    color: #2b2b2b;
+    line-height: 1.55;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 190px;
+    height: 100%;
+    background: #f1ddc8;
+    border-right: 2px solid #d89a55;
+    padding-top: 25px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px 18px;
+    color: #5a3515;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.sidebar a:hover {
+    background: #e8c8a5;
+}
+
+.container, .report-container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 25px 35px 45px 35px;
+    background: #ffffff;
+    min-height: 100vh;
+}
+
+.container {
+    margin-left: 220px;
+    margin-right: 30px;
+}
+
+h1 {
+    color: #9c5a16;
+    border-bottom: 3px solid #d89a55;
+    padding-bottom: 8px;
+}
+
+h2, h3 {
+    color: #a86420;
+}
+
+p {
+    margin-bottom: 14px;
+}
+
+a {
+    color: #a85f1d;
+}
+
+button, input[type="submit"] {
+    background: #d18436;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover, input[type="submit"]:hover {
+    background: #ad6c2b;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    max-width: 850px;
+}
+
+.report-item {
+    border: 2px solid #e4b37a;
+    border-radius: 10px;
+    padding: 15px;
+    background: #fff2e3;
+    text-align: center;
+}
+
+.graphics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-width: 610px;
+}
+
+.graphics-grid img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 3px solid #e4b37a;
+    background: #f7e6d1;
+}
+
+form {
+    margin-top: 15px;
+    padding: 15px;
+    background: #fff2e3;
+    border: 1px solid #e4b37a;
+    border-radius: 10px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    padding: 7px;
+    margin-top: 4px;
+    border: 1px solid #c89a68;
+    border-radius: 5px;
+    max-width: 100%;
+}
+
+code {
+    background: #f7e6d1;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+pre {
+    background: #2b2119;
+    color: #fff7ee;
+    padding: 14px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px 0;
+}
+
+th, td {
+    border: 1px solid #d5aa7a;
+    padding: 8px;
+    vertical-align: top;
+}
+
+th {
+    background: #f1ddc8;
+    color: #5a3515;
+}
+
+.placeholder {
+    color: #8a4c0f;
+    background: #fff2e3;
+    border: 1px dashed #d18436;
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+.note, .warnbox {
+    background: #fff2e3;
+    border-left: 4px solid #d18436;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.delete-form {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+td form.delete-form {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    display: inline !important;
+}
+
+td form.delete-form input.delete-button {
+    background: #d9822b;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f3dfc7;
+    color: #5a3a20;
+    border-top: 1px solid #d89a5b;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding-top: 0;
+    }
+
+    .container {
+        margin: 0;
+        padding: 20px;
+    }
+
+    .report-container {
+        padding: 20px;
+    }
+
+    .graphics-grid {
+        grid-template-columns: 1fr;
+    }
+}

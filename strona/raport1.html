@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Sprawozdanie z laboratorium nr 1</title>
+</head>
+<body>
+<div class="report-container">
+    <h1 id="sprawozdanie-lab-1">Sprawozdanie z laboratorium nr 1</h1>
+    <p><a href="index.html"><button>Strona główna</button></a></p>
+    <p>
+        <strong>Temat:</strong> SSH, Linux i publikacja WWW
+    </p>
+
+<h2>Cel i zakres ćwiczenia</h2><p>Celem ćwiczenia było zapoznanie się z pracą zdalną przez SSH, podstawowymi poleceniami systemu Linux, uprawnieniami plików oraz publikacją prostej strony WWW w katalogu użytkownika.</p><ul><li>uruchomienie PuTTY i konfiguracja połączenia SSH z serwerem zajęciowym,</li><li>wygenerowanie i użycie kluczy RSA do autentykacji,</li><li>praca z katalogami, plikami, procesami, użytkownikami i prawami dostępu,</li><li>utworzenie katalogu <code>public_html</code>, pliku <code>index.html</code> oraz test działania strony w przeglądarce,</li><li>pakowanie katalogu domowego narzędziem <code>tar</code> oraz przygotowanie raportu HTML.</li></ul><h2>Połączenie SSH przez PuTTY</h2><p>Połączenie wykonano przez PuTTY, wybierając typ połączenia SSH i port 22. Po zaakceptowaniu klucza publicznego serwera zalogowano się na konto użytkownika.</p><table><thead><tr><th>Czynność</th><th>Polecenie / ustawienie</th><th>Wynik</th></tr></thead><tbody><tr><td>Adres serwera</td><td><code>mts.wibro.agh.edu.pl</code> lub <code>149.156.115.209</code></td><td>Połączenie SSH zestawione.</td></tr><tr><td>Login</td><td><code>sNumerIndeksu</code></td><td>Logowanie poprawne po podaniu hasła.</td></tr><tr><td>Zakończenie sesji</td><td><code>exit</code> albo <code>Ctrl+D</code></td><td>Połączenie zamknięte.</td></tr></tbody></table><p>W trakcie pierwszego połączenia klient wyświetlił ostrzeżenie o nieznanym kluczu hosta. Po sprawdzeniu adresu serwera klucz zaakceptowano, dzięki czemu kolejne połączenia mogą być weryfikowane względem zapamiętanego odcisku.</p><h2>Autentykacja za pomocą kluczy RSA</h2><p>Wygenerowano parę kluczy asymetrycznych RSA, sprawdzono pliki w katalogu <code>~/.ssh</code> i skopiowano klucz publiczny na konto na serwerze student.</p><pre><code>ssh-keygen
+ls -la ~/.ssh
+cat ~/.ssh/id_rsa.pub
+ssh-copy-id username@student.agh.edu.pl
+ssh username@student.agh.edu.pl
+cat ~/.ssh/authorized_keys</code></pre><p>Klucz prywatny pozostał na koncie użytkownika i nie powinien być udostępniany. Klucz publiczny został dopisany do pliku <code>authorized_keys</code> na serwerze docelowym. Podczas logowania serwer sprawdza, czy klient potrafi potwierdzić posiadanie klucza prywatnego odpowiadającego dopisanemu kluczowi publicznemu.</p><h2>Praca z plikami, katalogami i procesami</h2><p>Wykonano podstawowe operacje na katalogach i plikach, sprawdzając działanie uprawnień oraz przekierowań wejścia/wyjścia.</p><pre><code>mkdir tmp
+echo "Imię Nazwisko" &gt; tmp/dane.txt
+chmod 644 tmp/dane.txt
+ls -l tmp/dane.txt
+chmod 600 tmp/dane.txt
+pwd
+cd ~
+cd /
+cd ..
+find / -name passwd 2&gt;/dev/null
+wc -l public_html/index.html
+rm -r tmp</code></pre><table><thead><tr><th>Element</th><th>Znaczenie</th><th>Wniosek</th></tr></thead><tbody><tr><td><code>chmod 644</code></td><td>właściciel: odczyt/zapis, grupa i inni: odczyt</td><td>Dobre ustawienie dla publicznych plików HTML.</td></tr><tr><td><code>chmod 600</code></td><td>tylko właściciel może czytać i pisać</td><td>Dobre ustawienie dla prywatnych plików.</td></tr><tr><td><code>r-x</code> dla katalogu</td><td>odczyt i przeszukiwanie katalogu</td><td>Minimalne prawo potrzebne do wejścia do katalogu publicznego.</td></tr></tbody></table><p>Liczbę aktywnych użytkowników można policzyć np. poleceniem <code>who | wc -l</code>. Procesy sprawdzono poleceniami <code>ps</code>, <code>ps aux</code> i <code>top</code>.</p><h2>Utworzenie i test strony WWW</h2><p>Utworzono katalog do publikacji stron i przygotowano plik startowy <code>index.html</code>.</p><pre><code>mkdir -p ~/public_html
+chmod 755 ~/public_html
+cat &gt; ~/public_html/index.html &lt;&lt;'EOF'
+&lt;!DOCTYPE html&gt;
+&lt;html lang="pl"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Strona próbna&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Witaj świecie!&lt;/h1&gt;
+  &lt;h2&gt;Imię Nazwisko&lt;/h2&gt;
+  &lt;p&gt;Zażółć gęślą jaźń - test polskich znaków.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+EOF
+chmod 644 ~/public_html/index.html</code></pre><p>Strona była dostępna pod adresem <code>http://mts.wibro.agh.edu.pl/~sNumerIndeksu</code>. Po usunięciu znacznika <code>&lt;meta charset="UTF-8"&gt;</code> mogły pojawić się błędy w wyświetlaniu polskich znaków, ponieważ przeglądarka nie otrzymała jednoznacznej informacji o kodowaniu dokumentu.</p><p>Minimalne prawa dostępu dla poprawnego wyświetlenia strony to zwykle: katalog <code>public_html</code> - <code>755</code>, plik <code>index.html</code> - <code>644</code>.</p><h2>Archiwizacja i wnioski</h2><p>Sprawdzono tworzenie archiwów oraz zachowanie uprawnień plików po rozpakowaniu.</p><pre><code>tar -cvf dom.tar ~
+tar -czvf dom.tar.gz ~
+tar -cjvf dom.tar.bz2 ~
+mkdir ~/test_archiwum
+tar -xzvf dom.tar.gz -C ~/test_archiwum
+ls -l ~/test_archiwum</code></pre><p>Archiwum <code>.tar</code> przechowuje strukturę katalogów, a warianty <code>.tar.gz</code> i <code>.tar.bz2</code> dodatkowo kompresują dane. W praktyce kompresja <code>gzip</code> jest szybka, natomiast <code>bzip2</code> często tworzy mniejszy plik kosztem czasu działania.</p><p class="note"><strong>Wniosek:</strong> SSH zapewnia bezpieczną pracę zdalną, a poprawne uprawnienia plików i ustawienie UTF-8 są kluczowe dla publikacji stron WWW na serwerze.</p>
+</div>
+</body>
+</html>

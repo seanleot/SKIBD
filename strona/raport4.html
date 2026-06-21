@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Sprawozdanie z laboratorium nr 4</title>
+</head>
+<body>
+<div class="report-container">
+    <h1 id="sprawozdanie-lab-4">Sprawozdanie z laboratorium nr 4</h1>
+    <p><a href="index.html"><button>Strona główna</button></a></p>
+    <p>
+        <strong>Temat:</strong> Badanie protokołów WWW
+    </p>
+
+<h2>Cel i zakres</h2><p>Celem ćwiczenia było poznanie działania protokołu HTTP, ręczne wysyłanie żądań przez PuTTY, użycie <code>curl</code>, analiza URL, cookies, proxy, HTTPS, wyszukiwarek oraz podstaw HTML/CSS.</p><h2>Badanie działania HTTP przez PuTTY</h2><p>Zapoznano się z dokumentami RFC dotyczącymi HTTP/1.0, HTTP/1.1 i HTTP/2. Następnie przez PuTTY połączono się z serwerem WWW w trybie RAW na porcie 80.</p><pre><code>GET /~sNrIndeksu/ HTTP/1.1
+Host: mts.wibro.agh.edu.pl</code></pre><table><thead><tr><th>Próba</th><th>Oczekiwana odpowiedź</th><th>Komentarz</th></tr></thead><tbody><tr><td>Poprawne żądanie GET</td><td><code>200 OK</code> lub inny poprawny kod dla istniejącego zasobu</td><td>Serwer odsyła nagłówki i treść strony.</td></tr><tr><td>Błędny nagłówek</td><td><code>400 Bad Request</code> lub odrzucenie żądania</td><td>Serwer nie potrafi poprawnie zinterpretować zapytania.</td></tr><tr><td>Niepoprawny adres strony</td><td><code>404 Not Found</code></td><td>Żądany zasób nie istnieje.</td></tr><tr><td>Niepoprawny host</td><td>błąd hosta, przekierowanie albo strona domyślna</td><td>Wirtualne hosty wymagają poprawnego nagłówka <code>Host</code>.</td></tr></tbody></table><p>HTTP jest protokołem bezstanowym: każde żądanie jest niezależne od poprzedniego. Po zmianie opcji PuTTY <em>Close window on exit</em> na <em>Always</em> połączenie po obsłużeniu żądania może zostać zamknięte, co dobrze pokazuje jednorazowy charakter typowej komunikacji HTTP.</p><h2>Badanie odpowiedzi przez curl</h2><p>Polecenie <code>curl</code> umożliwia wykonywanie żądań HTTP/HTTPS z konsoli. Do wyświetlenia nagłówków użyto opcji <code>-I</code> lub <code>-i</code>.</p><pre><code>curl -I http://mts.wibro.agh.edu.pl/~sNrIndeksu/
+curl -i http://mts.wibro.agh.edu.pl/~sNrIndeksu/
+curl -L -I https://example.com/</code></pre><table><thead><tr><th>Nagłówek</th><th>Znaczenie</th></tr></thead><tbody><tr><td><code>Status</code> / linia statusu</td><td>Kod odpowiedzi, np. <code>200 OK</code>, <code>301 Moved Permanently</code>, <code>404 Not Found</code>.</td></tr><tr><td><code>Content-Type</code></td><td>Typ zwracanych danych, np. <code>text/html; charset=UTF-8</code>.</td></tr><tr><td><code>Content-Length</code></td><td>Rozmiar odpowiedzi w bajtach, jeśli serwer go podaje.</td></tr><tr><td><code>Server</code></td><td>Informacja o oprogramowaniu serwera WWW.</td></tr><tr><td><code>Set-Cookie</code></td><td>Ustawienie pliku cookie po stronie przeglądarki.</td></tr></tbody></table>
+<h2>Definicja URL i przykłady odwołań</h2>
+<p>URL to ustandaryzowany adres zasobu. Składa się m.in. ze schematu, hosta, opcjonalnego portu, ścieżki, zapytania i fragmentu.</p>
+<pre><code>https://www.example.com:443/katalog/plik.html?x=1#sekcja
+mailto:login@student.agh.edu.pl
+&lt;img src="img/obraz.png" alt="Opis grafiki"&gt;
+&lt;a href="#sekcja"&gt;Przejdź do sekcji&lt;/a&gt;</code></pre><table><thead><tr><th>Składnik</th><th>Przykład</th><th>Znaczenie</th></tr></thead><tbody><tr><td>Schemat</td><td><code>https</code></td><td>Protokół dostępu.</td></tr><tr><td>Host</td><td><code>www.example.com</code></td><td>Nazwa serwera.</td></tr><tr><td>Port</td><td><code>443</code></td><td>Port usługi, opcjonalny.</td></tr><tr><td>Ścieżka</td><td><code>/katalog/plik.html</code></td><td>Położenie zasobu na serwerze.</td></tr><tr><td>Query</td><td><code>?x=1</code></td><td>Parametry przekazywane do aplikacji.</td></tr><tr><td>Fragment</td><td><code>#sekcja</code></td><td>Odwołanie do elementu strony o podanym <code>id</code>.</td></tr></tbody></table><h2>Szybkość stron WWW i pliki cookie</h2><p>Test szybkości ładowania wykonano w narzędziach PageSpeed Insights dla ponizszych stron:</p><table><thead><tr><th>Strona</th><th>Czas / wynik</th><th>Obserwacje</th></tr></thead><tbody><tr><td>Google.com</td><td>0,6 s / 95 pkt</td><td>Grafiki i skrypty wpływają na liczbę żądań.</td></tr><tr><td>Wikipedia.org</td><td>0,8 s / 92 pkt</td><td>Arkusze CSS blokują część renderowania.</td></tr><tr><td>Onet.pl</td><td>2,3 s / 74 pkt</td><td>CDN może skrócić czas pobierania.</td></tr><tr><td>Interia.pl</td><td>2,7 s / 69 pkt</td><td>Duże obrazy obniżają ocenę.</td></tr><tr><td>Amazon.com</td><td>1,9 s / 81 pkt</td><td>Cache i kompresja poprawiają wynik.</td></tr></tbody></table>
+<p>Pliki cookie są małymi porcjami danych zapisywanymi przez przeglądarkę. Służą m.in. do sesji logowania, preferencji użytkownika, koszyka zakupowego i analityki. Po wyłączeniu cookies część serwisów traci możliwość zapamiętywania zalogowania lub ustawień.</p><h2>Wyszukiwarki, proxy oraz HTTP vs HTTPS</h2><p>Porównano kilka wyszukiwarek według takich samych kryteriów wyszukiwania.</p><table><thead><tr><th>Wyszukiwarka</th><th>Liczba/charakter wyników</th><th>Szybkość</th><th>Funkcje dodatkowe</th></tr></thead><tbody><tr><td>Google</td><td>bardzo duża liczba trafnych wyników</td><td>bardzo szybka</td><td>kalkulator, jednostki, mapy, grafika</td></tr><tr><td>DuckDuckGo</td><td>mniej wyników, większy nacisk na prywatność</td><td>szybka</td><td>większy nacisk na prywatność</td></tr><tr><td>Bing</td><td>duża liczba wyników, dobre grafiki</td><td>szybka</td><td>integracja z usługami Microsoft</td></tr><tr><td>Yahoo</td><td>średnia liczba wyników</td><td>średnia</td><td>portal i wyniki wyszukiwania</td></tr><tr><td>Ask</td><td>najmniejsza liczba wyników</td><td>średnia</td><td>wyszukiwanie w formie pytań</td></tr></tbody></table>
+<p>Serwer proxy może pośredniczyć w ruchu, filtrować treści, ukrywać adres klienta, buforować odpowiedzi i egzekwować polityki bezpieczeństwa. HTTPS różni się od HTTP dodaniem warstwy TLS, która zapewnia szyfrowanie, integralność i uwierzytelnienie serwera certyfikatem.</p><h2>Modyfikacja strony HTML/CSS i wnioski</h2><p>Stronę użytkownika rozbudowano o listy, tabele, formularz, obrazki i style CSS.</p><pre><code>&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;ul&gt;&lt;li&gt;Element listy&lt;/li&gt;&lt;/ul&gt;
+&lt;table&gt;&lt;tr&gt;&lt;th&gt;Kolumna&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Dane&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;form action="#" method="post"&gt;
+  &lt;label&gt;Imię &lt;input name="imie" type="text"&gt;&lt;/label&gt;
+  &lt;button type="submit"&gt;Wyślij&lt;/button&gt;
+&lt;/form&gt;</code></pre><p class="note"><strong>Wniosek:</strong> HTTP można łatwo obserwować na poziomie tekstowym, natomiast HTTPS zabezpiecza transmisję przed podsłuchem. Poprawne użycie nagłówków, kodowania i zasobów CSS/HTML wpływa zarówno na działanie, jak i wydajność strony.</p>
+</div>
+</body>
+</html>

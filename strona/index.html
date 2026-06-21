@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="bedi.jpg.png">
+    <title>Strona Projektowa - Kuba Michałowski</title>
+</head>
+<body>
+<div class="sidebar">
+    <a href="#sekcja-sprawozdania">Sprawozdania</a>
+    <a href="#sekcja-grafika">Elementy graficzne</a>
+    <a href="#sekcja-sterowanie">Elementy testowe</a>
+    <a href="#naglowek">Do góry</a>
+    <a href="#stopka">Zjedź na dół</a>
+    <a href="kalkulator.php">KALKULATOR</a>
+    <a href="baza.php">BAZA</a>
+    <a href="losowanie.php">LOSOWANIE</a>
+    <a href="lyricpost-master/lyricpost-master/index.html">
+    <button>Otwórz LyricPost</button>
+    <a href="mechanika1_fiszki_quiz_egzamin.html">
+    <button>Mechanika fiszki quiz</button>
+</a>
+</div>
+
+<div class="container">
+    <h1 id="naglowek">Strona projektowa SKiBD (ąęóńżźść)</h1>
+    <h2>Jakub Michałowski</h2>
+    
+
+    <h3 id="sekcja-sprawozdania">Moje Raporty</h3>
+    <div class="reports-grid">
+        <div class="report-item">
+            Sprawozdanie 1<br>
+            <small>SSH, Linux i publikacja WWW</small><br><br>
+            <a href="raport1.html"><button>Otwórz</button></a>
+        </div>
+        <div class="report-item">
+            Sprawozdanie 2<br>
+            <small>Badanie ustawień i parametrów sieci</small><br><br>
+            <a href="raport2.html"><button>Otwórz</button></a>
+        </div>
+        <div class="report-item">
+            Sprawozdanie 3<br>
+            <small>Protokoły przesyłania plików</small><br><br>
+            <a href="raport3.html"><button>Otwórz</button></a>
+        </div>
+        <div class="report-item">
+            Sprawozdanie 4<br>
+            <small>Badanie protokołów WWW</small><br><br>
+            <a href="raport4.html"><button>Otwórz</button></a>
+        </div>
+        <div class="report-item">
+            Sprawozdanie 5<br>
+            <small>Protokoły pocztowe</small><br><br>
+            <a href="raport5.html"><button>Otwórz</button></a>
+        </div>
+        
+        
+    </div>
+
+    <h3 id="sekcja-grafika">Elementy graficzne</h3>
+    <div class="graphics-grid">
+        <img src="grafika1.jpg" alt="Grafika 1">
+        <img src="grafika2.jpg" alt="Grafika 2">
+        <img src="grafika3.jpg" alt="Grafika 3">
+        <img src="grafika4.jpg" alt="Grafika 4">
+    </div>
+
+    <h3 id="sekcja-sterowanie">Elementy sterujące</h3>
+    <button type="button" onclick="alert('Zdecydowanie działa')">Kliknij mnie</button>
+
+    <br><br>
+    <form id="stopka-formularz">
+        <label for="imie">Podaj imię:</label>
+        <input type="text" id="imie" name="imie" placeholder="Twoje imię">
+
+        <label for="wiek">Wiek:</label>
+        <input type="number" id="wiek" name="wiek" min="0" max="100">
+
+        <label for="plec">Płeć:</label>
+        <select id="plec" name="plec">
+            <option value="m">Mężczyzna</option>
+            <option value="k">Kobieta</option>
+            <option value="inna">Inna / nie podaję</option>
+        </select>
+
+        <br><br>
+        <input type="submit" value="Wyślij dane">
+    </form>
+
+    <footer id="stopka">
+        <p>Jakub Michałowski SKIBD</p>
+        <p>&copy; 2026</p>
+    </footer>
+
+    </div>
+
+</body>
+</html>

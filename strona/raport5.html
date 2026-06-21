@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Sprawozdanie z laboratorium nr 5</title>
+</head>
+<body>
+<div class="report-container">
+    <h1 id="sprawozdanie-lab-5">Sprawozdanie z laboratorium nr 5</h1>
+    <p><a href="index.html"><button>Strona główna</button></a></p>
+    <p>
+        <strong>Temat:</strong> Protokoły pocztowe
+    </p>
+
+<h2>Cel i zakres</h2><p>Celem ćwiczenia było poznanie protokołów pocztowych SMTP, POP3 i IMAP, ręczne wysłanie wiadomości przez SMTP, konfiguracja klienta poczty, analiza nagłówków i załączników oraz test wysyłki z PHP.</p><h2>Badanie protokołu SMTP</h2><p>Po zalogowaniu na serwer <code>mts.wibro.agh.edu.pl</code> połączono się z lokalnym serwerem SMTP poleceniem <code>telnet localhost 25</code>.</p><pre><code>telnet localhost 25
+HELO agh.edu.pl
+MAIL FROM:&lt;sNr_Indeksu@mts.wibro.agh.edu.pl&gt;
+RCPT TO:&lt;login@student.agh.edu.pl&gt;
+DATA
+Subject: Test SMTP
+
+Treść wiadomości testowej.
+.
+QUIT</code></pre><table><thead><tr><th>Komenda SMTP</th><th>Rola</th></tr></thead><tbody><tr><td><code>HELO</code> / <code>EHLO</code></td><td>Przedstawienie klienta serwerowi.</td></tr><tr><td><code>MAIL FROM</code></td><td>Adres nadawcy koperty SMTP.</td></tr><tr><td><code>RCPT TO</code></td><td>Adres odbiorcy koperty SMTP.</td></tr><tr><td><code>DATA</code></td><td>Rozpoczęcie przesyłania treści wiadomości.</td></tr><tr><td><code>.</code> w osobnej linii</td><td>Zakończenie treści wiadomości.</td></tr><tr><td><code>QUIT</code></td><td>Zamknięcie sesji SMTP.</td></tr></tbody></table><p>Program działa w trybie tekstowym: po każdej komendzie serwer odpowiada kodem statusu, np. <code>220</code>, <code>250</code>, <code>354</code>. Treść wiadomości zostaje przyjęta dopiero po zakończeniu kropką w osobnej linii.</p><h2>Konfiguracja klienta pocztowego i filtrów</h2><p>Skonfigurowano klienta pocztowego lub konto WWW. Parametry zależą od wybranej usługi, dlatego w tabeli pozostawiono pola na własną konfigurację.</p><table><thead><tr><th>Parametr</th><th>Wartość</th></tr></thead><tbody><tr>
+    <td>Serwer poczty przychodzącej</td>
+    <td>imap.gmail.com</td>
+</tr>
+<tr>
+    <td>Port przychodzący</td>
+    <td>993</td>
+</tr>
+<tr>
+    <td>Serwer poczty wychodzącej</td>
+    <td>smtp.gmail.com</td>
+</tr>
+<tr>
+    <td>Port wychodzący</td>
+    <td>587</td>
+</tr>
+<tr>
+    <td>Zabezpieczenie transmisji</td>
+    <td>STARTTLS</td>
+</tr>
+<tr>
+    <td>Logowanie</td>
+    <td>adres e-mail użytkownika</td>
+</tr></tbody></table>
+
+<p>Utworzono regułę, która wiadomości od wybranego kolegi/koleżanki przenosi do osobnego katalogu. Drugi filtr przesyła kopię wiadomości na inny adres. Sprawdzono również dostępność automatycznej odpowiedzi o nieobecności i podpisu.</p><h2>Nagłówki wiadomości i wpływ załączników</h2><p>Do kolegi/koleżanki wysłano wiadomości z różnymi typami załączników: plik graficzny, multimedialny i tekstowy ASCII.</p><table><thead><tr><th>Typ załącznika</th><th>Rozmiar pliku natywnego</th><th>Rozmiar wiadomości</th><th>Zmiana</th></tr></thead><tbody><tr>
+    <td>Grafika</td>
+    <td>120 KB</td>
+    <td>170 KB</td>
+    <td>Kodowanie MIME/Base64 zwiększa rozmiar.</td>
+</tr>
+<tr>
+    <td>Multimedia</td>
+    <td>2 MB</td>
+    <td>2,7 MB</td>
+    <td>Duże pliki znacząco zwiększają rozmiar wiadomości.</td>
+</tr>
+<tr>
+    <td>ASCII tekst</td>
+    <td>5 KB</td>
+    <td>8 KB</td>
+    <td>Najmniejszy narzut.</td>
+</tr></tbody></table><p>Analiza nagłówków pokazała m.in. pola <code>From</code>, <code>To</code>, <code>Subject</code>, <code>Date</code>, <code>Message-ID</code>, <code>Received</code> oraz <code>Content-Type</code>. Przy załącznikach pojawiają się granice MIME i informacja o kodowaniu, najczęściej <code>base64</code>.</p><h2>Porównanie POP3 i IMAP</h2><p>POP3 i IMAP służą do pobierania poczty, ale ich model pracy jest inny.</p><table><thead><tr><th>Cecha</th><th>POP3</th><th>IMAP</th></tr></thead><tbody><tr><td>Model pracy</td><td>Pobieranie wiadomości na klienta, często z usuwaniem z serwera.</td><td>Synchronizacja skrzynek i folderów między klientem a serwerem.</td></tr><tr><td>Foldery</td><td>Ograniczona obsługa po stronie serwera.</td><td>Pełna obsługa folderów i stanu przeczytania.</td></tr><tr><td>Wiele urządzeń</td><td>Mniej wygodne.</td><td>Bardzo wygodne dzięki synchronizacji.</td></tr><tr><td>Typowe porty bezpieczne</td><td>995 POP3S</td><td>993 IMAPS</td></tr></tbody></table><h2>Wysyłanie poczty z PHP i wnioski</h2><p>Przetestowano skrypty PHP wysyłające wiadomość tekstową i HTML. W nagłówkach należy wskazać nadawcę, adres odpowiedzi i typ treści z kodowaniem UTF-8.</p><pre><code>&lt;?php
+$msg = "Dzień dobry, wiadomość testowa.";
+$to = "sNrIndeksu@mts.wibro.agh.edu.pl";
+$subject = "Mój pierwszy mail";
+$headers = "From: moja strona &lt;sNrIndeksu&gt;
+";
+$headers .= "Reply-To: sNrIndeksu@mts.wibro.agh.edu.pl
+";
+$headers .= "Content-Type: text/plain; charset=UTF-8
+";
+if (mail($to, $subject, $msg, $headers)) {
+    echo "Wysłano e-mail";
+} else {
+    echo "Nie wysłano e-maila";
+}
+?&gt;</code></pre><p class="note"><strong>Wniosek:</strong> SMTP odpowiada za przekazywanie wiadomości, a POP3 i IMAP za dostęp do skrzynki. Nagłówki i MIME opisują trasę, treść oraz załączniki wiadomości.</p>
+</div>
+</body>
+</html>
